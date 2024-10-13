@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BackgroundService": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

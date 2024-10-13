@@ -1,0 +1,109 @@
+version: '3'
+x-common-configuration: &common-configuration
+    image: apache/kafka:latest
+    networks:
+      - kafka-sample
+    restart: always
+
+x-common-variables: &common-variables
+      KAFKA_KRAFT_CLUSTER_ID: samplecluster
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@broker1:9093,2@broker2:9093,3@broker3:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 2
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 2
+  
+x-common-controller-variables: &common-controller-variables
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092,EXTERNAL://localhost:29092
+
+
+x-common-broker-variables: &common-broker-variables
+      KAFKA_PROCESS_ROLES: broker
+      KAFKA_LISTENERS: PLAINTEXT://:9092,EXTERNAL://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092,EXTERNAL://localhost:29092
+
+services:
+  broker1:
+    <<: *common-configuration
+    container_name: broker1
+    environment:
+      <<: 
+        - *common-variables
+        - *common-controller-variables
+      KAFKA_NODE_ID: 1
+    ports:
+      - 29092:29092
+
+  
+  broker2:
+    <<: *common-configuration
+    container_name: broker2
+    environment:
+      <<: 
+        - *common-variables
+        - *common-controller-variables
+      KAFKA_NODE_ID: 2
+    ports:
+      - 29093:29092
+  
+  broker3:
+    <<: *common-configuration
+    container_name: broker3
+    environment:
+      <<: 
+        - *common-variables
+        - *common-controller-variables
+      KAFKA_NODE_ID: 3
+    ports:
+      - 29094:29092
+  
+  broker4:
+    <<: *common-configuration
+    container_name: broker4
+    image: apache/kafka:latest
+    ports:
+      - 29095:29092
+    environment:
+      <<: 
+        - *common-variables
+        - *common-broker-variables
+      KAFKA_NODE_ID: 4
+    networks:
+      - kafka-sample
+  
+  broker5:
+    <<: *common-configuration
+    container_name: broker5
+    image: apache/kafka:latest
+    ports:
+      - 29096:29092
+    environment:
+      <<: 
+        - *common-variables
+        - *common-broker-variables
+      KAFKA_NODE_ID: 5
+    networks:
+      - kafka-sample
+  
+  broker6:
+    <<: *common-configuration
+    container_name: broker6
+    image: apache/kafka:latest
+    ports:
+      - 29097:29092
+    environment:
+      <<: 
+        - *common-variables
+        - *common-broker-variables
+      KAFKA_NODE_ID: 6
+    networks:
+      - kafka-sample
+
+networks:
+  kafka-sample:      

@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  apiservice:
+    image: ${DOCKER_REGISTRY-}apiservice
+    build:
+      context: .
+      dockerfile: ApiService/Dockerfile
+    ports:
+        - "8080:8080"
+    networks:
+        - docker_kafka-sample
+ 
+  backgroundservice:
+    image: ${DOCKER_REGISTRY-}backgroundservice
+    build:
+      context: .
+      dockerfile: BackgroundService/Dockerfile
+
+    networks:
+        - docker_kafka-sample
+networks:
+  docker_kafka-sample:
+    external: true
